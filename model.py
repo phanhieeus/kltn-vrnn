@@ -10,7 +10,7 @@ class VRNN(nn.Module):
         self.z_dim = z_dim
         self.h_dim = h_dim
         self.n_layers = n_layers
-
+    
         # ========================
         # Feature extractors
         # ========================
@@ -100,7 +100,7 @@ class VRNN(nn.Module):
     # Forward
     # ======================================================
 
-    def forward(self, x):
+    def forward(self, x, beta=1.0):
         """
         x: (T, B, x_dim)
         """
@@ -178,7 +178,7 @@ class VRNN(nn.Module):
                 x_t, dec_mu, dec_logvar
             ).mean()
 
-        total_loss = (kld_loss + recon_loss) / T
+        total_loss = (beta * kld_loss + recon_loss) / T
 
         return total_loss, recon_loss / T, kld_loss / T
 
