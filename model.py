@@ -186,6 +186,6 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
     model = VRNN(x_dim=1, z_dim=16, h_dim=64, n_layers=2).to(device)
-    x = torch.randn(10, 32, 1).to(device)
+    x = torch.randn(32, 16, 1).to(device)
     loss, recon_loss, kld_loss = model(x)
     print(loss, recon_loss, kld_loss)
