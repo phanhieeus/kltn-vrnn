@@ -53,9 +53,22 @@ def main():
 
     wandb.init(project="vrnn", config=config)
     config = wandb.config
+
+    # Log Dataset as Artifact
+    if os.path.exists(config.file_path):
+        dataset_artifact = wandb.Artifact(
+            name=f"finance-dataset-{config.stock_name}", 
+            type="dataset",
+            description=f"Stock price history for {config.stock_name}",
+            metadata=dict(config)
+        )
+        dataset_artifact.add_file(config.file_path)
+        wandb.log_artifact(dataset_artifact)
+
     # Dataset & DataLoader
     dataset = FinanceDataset(T=config.T, file_path=config.file_path, feature_columns=config.feature_columns, normalize=config.normalize_dataset)
     dataloader = DataLoader(dataset, batch_size=config.batch_size, shuffle=False)
+
 
     # Model & Optimizer
     model = VRNN(x_dim=config.x_dim, z_dim=config.z_dim, h_dim=config.h_dim, n_layers=config.n_layers).to(device)

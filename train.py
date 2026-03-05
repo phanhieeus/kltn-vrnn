@@ -60,9 +60,29 @@ def train(model, dataloader, optimizer, epochs=100, device='cpu'):
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': avg_loss,
             }, checkpoint_path)
+            
+            # Log as Artifact
+            checkpoint_artifact = wandb.Artifact(
+                name=f"model-checkpoint-epoch-{epoch+1}", 
+                type="model",
+                description=f"Model checkpoint at epoch {epoch+1}"
+            )
+            checkpoint_artifact.add_file(checkpoint_path)
+            wandb.log_artifact(checkpoint_artifact)
+
     
     # Save final model
-    torch.save(model.state_dict(), "checkpoints/vrnn_final.pth")
+    final_model_path = "checkpoints/vrnn_final.pth"
+    torch.save(model.state_dict(), final_model_path)
+    
+    final_artifact = wandb.Artifact(
+        name="vrnn-final-model", 
+        type="model",
+        description="Final trained VRNN model"
+    )
+    final_artifact.add_file(final_model_path)
+    wandb.log_artifact(final_artifact)
+
     model.eval()
     return model
 
