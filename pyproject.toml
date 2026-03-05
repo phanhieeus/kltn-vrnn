@@ -9,6 +9,9 @@ dependencies = [
     "torchvision",
     "torchaudio",
     "tqdm>=4.66.5",
+    "streamlit>=1.55.0",
+    "wandb>=0.25.0",
+    "python-dotenv>=1.2.2",
 ]
 
 [[tool.uv.index]]

@@ -1,5 +1,9 @@
 import torch
 from torch import nn
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 
 class VRNN(nn.Module):
@@ -183,9 +187,10 @@ class VRNN(nn.Module):
         return total_loss, recon_loss / T, kld_loss / T
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(device)
+    logger.info(f"Device: {device}")
     model = VRNN(x_dim=1, z_dim=16, h_dim=64, n_layers=2).to(device)
     x = torch.randn(32, 16, 1).to(device)
     loss, recon_loss, kld_loss = model(x)
-    print(loss, recon_loss, kld_loss)
+    logger.info(f"Loss: {loss}, Recon Loss: {recon_loss}, KLD Loss: {kld_loss}")

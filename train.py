@@ -1,9 +1,7 @@
 import os
 import torch
-from torch.utils.data import DataLoader
-from model import VRNN
-from data_utils import FinanceDataset
 from tqdm import tqdm
+import wandb
 
 def kl_annealing(epoch, warmup=20):
     return min(1.0, epoch / warmup)
@@ -11,12 +9,6 @@ def kl_annealing(epoch, warmup=20):
 def train(model, dataloader, optimizer, epochs=100, device='cpu'):
     model.train()
     os.makedirs("checkpoints", exist_ok=True)
-    
-    history = {
-        "total_loss": [],
-        "recon_loss": [],
-        "kld_loss": []
-    }
     
     pbar = tqdm(range(epochs), desc="Training")
     for epoch in pbar:
@@ -44,10 +36,13 @@ def train(model, dataloader, optimizer, epochs=100, device='cpu'):
         avg_loss = epoch_total_loss / len(dataloader)
         avg_recon = epoch_recon_loss / len(dataloader)
         avg_kld = epoch_kld_loss / len(dataloader)
-        
-        history["total_loss"].append(avg_loss)
-        history["recon_loss"].append(avg_recon)
-        history["kld_loss"].append(avg_kld)
+
+        wandb.log({
+            "total_loss": avg_loss,
+            "recon_loss": avg_recon,
+            "kld_loss": avg_kld,
+            "beta": beta
+        })
         
         pbar.set_postfix({
             "Loss": f"{avg_loss:.4f}",
@@ -64,13 +59,12 @@ def train(model, dataloader, optimizer, epochs=100, device='cpu'):
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': avg_loss,
-                'history': history
             }, checkpoint_path)
     
     # Save final model
     torch.save(model.state_dict(), "checkpoints/vrnn_final.pth")
     model.eval()
-    return model, history
+    return model
 
 if __name__ == "__main__":
     # This block can be used for local testing if needed

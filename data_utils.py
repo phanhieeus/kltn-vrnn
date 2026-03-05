@@ -1,5 +1,7 @@
 import torch
+import logging
 from torch.utils.data import Dataset, DataLoader
+
 import pandas as pd
 
 class FinanceDataset(Dataset):
@@ -35,9 +37,12 @@ class FinanceDataset(Dataset):
         return torch.tensor(x, dtype=torch.float32)
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
     dataset = FinanceDataset(T=40, file_path=r"data\FPT Corp Stock Price History.csv", feature_columns=["Change %"])
     dataloader = DataLoader(dataset, batch_size=32, shuffle=False)
-    print(dataset.data.shape)
-    print(len(dataloader))
+    logger.info(f"Dataset shape: {dataset.data.shape}")
+    logger.info(f"Dataloader length: {len(dataloader)}")
     for x in dataloader:
-        print(x.shape)
+        logger.info(f"Batch shape: {x.shape}")
+        break  # Just check one shape
