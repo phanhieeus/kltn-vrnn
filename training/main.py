@@ -7,11 +7,12 @@ import numpy as np
 
 import torch
 from torch.utils.data import DataLoader
-from model import VRNN
-from data_utils import FinanceDataset
-from train import train
+from .trainer import train
+from .model import VRNN
+from .data_utils import FinanceDataset
+from .logger_utils import setup_logging, get_logger
 from torch.optim import Adam
-from logger_utils import setup_logging, get_logger
+
 
 logger = get_logger(__name__)
 
@@ -38,14 +39,15 @@ def main():
         "x_dim": 1,
         "z_dim": 16,
         "h_dim": 64,
-        "n_layers": 2,
-        "T": 40,
+        "n_layers": 3,
+        "T": 50,
         "file_path": r"data\FPT Corp Stock Price History.csv",
         "feature_columns": ["Change %"],
         "normalize_dataset": True,
         "batch_size": 32,
         "lr": 1e-3,
-        "epochs": 100,
+        "epochs": 300,
+        "warmup_epochs": 40,
         "level": "one-stock",
         "stock_name": "FPT",
         "category": "retail"
@@ -75,7 +77,7 @@ def main():
     optimizer = Adam(model.parameters(), lr=config.lr)
     
     # Start Training    
-    model = train(model, dataloader, optimizer, epochs=config.epochs, device=device)
+    model = train(model, dataloader, optimizer, epochs=config.epochs, warmup_epochs=config.warmup_epochs, device=device)
 
     logger.info("Training Complete")
 

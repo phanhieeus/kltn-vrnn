@@ -2,11 +2,9 @@ import os
 import torch
 from tqdm import tqdm
 import wandb
+from .utils import kl_annealing
 
-def kl_annealing(epoch, warmup=20):
-    return min(1.0, epoch / warmup)
-
-def train(model, dataloader, optimizer, epochs=100, device='cpu'):
+def train(model, dataloader, optimizer, epochs=100, warmup_epochs=20, device='cpu'):
     model.train()
     os.makedirs("checkpoints", exist_ok=True)
     
@@ -15,7 +13,7 @@ def train(model, dataloader, optimizer, epochs=100, device='cpu'):
         epoch_total_loss = 0.0
         epoch_recon_loss = 0.0
         epoch_kld_loss = 0.0
-        beta = kl_annealing(epoch)
+        beta = kl_annealing(epoch, warmup_epochs)
         
         for x in dataloader:
             # x shape from dataloader: (B, T, x_dim)
