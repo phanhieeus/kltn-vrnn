@@ -9,8 +9,22 @@ wheels/
 # Virtual environments
 .venv
 
-data/
 checkpoints/
 
 .env
 wandb
+
+# Lakehouse Storage
+lakehouse_data/
+*.duckdb
+*.duckdb.wal
+*.parquet
+*.csv
+*.json
+
+# HTML / RAW Dumps
+data/crawl_data/raw_html/
+data/crawl_data/extracted_data/
+
+# Secrets
+constants/proxies.py

@@ -36,18 +36,19 @@ def main():
 
     # Hyperparameters 
     config = {
-        "x_dim": 1,
-        "z_dim": 16,
-        "h_dim": 64,
-        "n_layers": 3,
-        "T": 50,
-        "file_path": r"data\FPT Corp Stock Price History.csv",
-        "feature_columns": ["Change %"],
-        "normalize_dataset": True,
+        "x_dim": 15,
+        "z_dim": 8,
+        "h_dim": 32,
+        "n_layers": 2,
+        "T": 20,
+        "file_path": r"data\FPT_features.csv",
+        "feature_columns": "all",
+        "clean_data": False,
+        "normalize_dataset": False,
         "batch_size": 32,
         "lr": 1e-3,
-        "epochs": 300,
-        "warmup_epochs": 40,
+        "epochs": 1000,
+        "warmup_epochs": 200,
         "level": "one-stock",
         "stock_name": "FPT",
         "category": "retail"
@@ -68,7 +69,7 @@ def main():
         wandb.log_artifact(dataset_artifact)
 
     # Dataset & DataLoader
-    dataset = FinanceDataset(T=config.T, file_path=config.file_path, feature_columns=config.feature_columns, normalize=config.normalize_dataset)
+    dataset = FinanceDataset(T=config.T, file_path=config.file_path, feature_columns=config.feature_columns, clean=config.clean_data, normalize=config.normalize_dataset)
     dataloader = DataLoader(dataset, batch_size=config.batch_size, shuffle=False)
 
 
