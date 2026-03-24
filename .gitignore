@@ -21,6 +21,7 @@ lakehouse_data/
 *.parquet
 *.csv
 *.json
+*.html
 
 # HTML / RAW Dumps
 data/crawl_data/raw_html/
